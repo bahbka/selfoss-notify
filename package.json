@@ -1,0 +1,67 @@
+{
+    "name": "selfoss-notify",
+    "fullName": "Selfoss Notify",
+    "description": "Checks and shows unread items count in your Selfoss RSS reader (http://selfoss.aditu.de)",
+    "license": "MPL 2.0",
+    "author": "Ivan Strokanev <bahbka@gmail.com>",
+    "homepage": "https://github.com/bahbka/selfoss-notify",
+    "version": "0.1",
+    "id": "jid1-9A1rrddMJgAZ1g",
+
+    "preferences": [
+    {
+        "type": "string",
+        "name": "url",
+        "value": "",
+        "title": "URL",
+        "description": "of your selfoss installation"
+    }, {
+        "type": "string",
+        "name": "username",
+        "value": "",
+        "title": "Username",
+        "description": "leave empty if not needed"
+    }, {
+        "type": "string",
+        "name": "password",
+        "value": "",
+        "title": "Password",
+        "description": "WARNING: storing and sending in clear text!"
+    }, {
+        "type": "control",
+        "name": "tryUpdate",
+        "label": "Try update",
+        "title": ""
+    }, {
+        "type": "integer",
+        "name": "interval",
+        "value": 15,
+        "title": "Update interval (minutes)"
+    }, {
+        "type": "bool",
+        "name": "showBadge",
+        "value": true,
+        "title": "Show unread count"
+    }, {
+        "type": "integer",
+        "name": "fontSize",
+        "value": 7,
+        "title": "Font size (px)"
+    }, {
+        "type": "integer",
+        "name": "badgeOpacity",
+        "value": 75,
+        "title": "Opacity in percent"
+    }, {
+        "type": "color",
+        "name": "fontColor",
+        "value": "#FFFFFF",
+        "title": "Font color"
+    }, {
+        "type": "color",
+        "name": "bgColor",
+        "value": "#444444",
+        "title": "Background color"
+    }
+    ]
+}
