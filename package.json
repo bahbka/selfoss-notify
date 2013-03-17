@@ -2,10 +2,10 @@
     "name": "selfoss-notify",
     "fullName": "Selfoss Notify",
     "description": "Checks and shows unread items count in your Selfoss RSS reader (http://selfoss.aditu.de)",
-    "license": "MPL 2.0",
+    "license": "GPL 3.0",
     "author": "Ivan Strokanev <bahbka@gmail.com>",
     "homepage": "https://github.com/bahbka/selfoss-notify",
-    "version": "0.1",
+    "version": "0.2",
     "id": "jid1-9A1rrddMJgAZ1g",
 
     "preferences": [
@@ -14,19 +14,7 @@
         "name": "url",
         "value": "",
         "title": "URL",
-        "description": "of your selfoss installation"
-    }, {
-        "type": "string",
-        "name": "username",
-        "value": "",
-        "title": "Username",
-        "description": "leave empty if not needed"
-    }, {
-        "type": "string",
-        "name": "password",
-        "value": "",
-        "title": "Password",
-        "description": "WARNING: storing and sending in clear text!"
+        "description": "URL of your selfoss installation, using credentials from password manager"
     }, {
         "type": "control",
         "name": "tryUpdate",
@@ -45,7 +33,7 @@
     }, {
         "type": "integer",
         "name": "fontSize",
-        "value": 7,
+        "value": 8,
         "title": "Font size (px)"
     }, {
         "type": "integer",
