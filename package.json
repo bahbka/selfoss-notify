@@ -27,7 +27,7 @@
     }, {
         "type": "bool",
         "name": "enablePopup",
-        "value": false,
+        "value": true,
         "title": "Enable popup on new"
     }, {
         "type": "integer",
