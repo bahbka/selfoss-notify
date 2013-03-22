@@ -5,7 +5,7 @@
     "license": "GPL 3.0",
     "author": "Ivan Strokanev <bahbka@gmail.com>",
     "homepage": "https://github.com/bahbka/selfoss-notify",
-    "version": "0.3",
+    "version": "0.4",
     "id": "jid1-9A1rrddMJgAZ1g",
 
     "preferences": [
@@ -32,7 +32,7 @@
     }, {
         "type": "integer",
         "name": "popupHideTimeout",
-        "value": 3,
+        "value": 5,
         "title": "Hide popup after (seconds)"
     }, {
         "type": "integer",

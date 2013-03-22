@@ -22,7 +22,7 @@ self.port.on("updateItems", function(items, updated, number, more, url, error) {
         $("#more").css("color", "#3d6d69");
 
     //console.log($(document).height()); // can't calculate actual height :(
-    self.port.emit("panel-resize", null, number*52+60);
+    self.port.emit("panel-resize", null, count*52+78);
 });
 
 $(".control").click(function() {
