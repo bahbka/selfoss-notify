@@ -5,7 +5,7 @@
     "license": "GPL 3.0",
     "author": "Ivan Strokanev <bahbka@gmail.com>",
     "homepage": "https://github.com/bahbka/selfoss-notify",
-    "version": "0.2",
+    "version": "0.3",
     "id": "jid1-9A1rrddMJgAZ1g",
 
     "preferences": [
@@ -13,8 +13,7 @@
         "type": "string",
         "name": "url",
         "value": "",
-        "title": "URL",
-        "description": "URL of your selfoss installation, using credentials from password manager"
+        "title": "URL"
     }, {
         "type": "control",
         "name": "tryUpdate",
@@ -25,6 +24,26 @@
         "name": "interval",
         "value": 15,
         "title": "Update interval (minutes)"
+    }, {
+        "type": "bool",
+        "name": "enablePopup",
+        "value": false,
+        "title": "Enable popup on new"
+    }, {
+        "type": "integer",
+        "name": "popupHideTimeout",
+        "value": 3,
+        "title": "Hide popup after (seconds)"
+    }, {
+        "type": "integer",
+        "name": "numberItems",
+        "value": 5,
+        "title": "Number of preview items"
+    }, {
+        "type": "bool",
+        "name": "openRead",
+        "value": true,
+        "title": "Mark as read after opening"
     }, {
         "type": "bool",
         "name": "showBadge",

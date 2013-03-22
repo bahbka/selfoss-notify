@@ -1,0 +1,122 @@
+body {
+    font:12px/21px 'OpenSansLight', Arial, sans-serif;
+    background:url(images/bg.gif) repeat;
+}
+
+#header {
+    position:absolute;
+    left:0;
+    top:0;
+    margin:0;
+    border:0;
+    width:100%;
+    background:#191718;
+    border-bottom:5px solid #3d6d69;
+}
+
+#logo {
+    display: inline;
+    height: 20px;
+    margin:5px 5px 0px 5px;
+}
+
+#title {
+    display: inline;
+    color: #eeeeee;
+    cursor: default;
+}
+
+#buttons {
+    float: right;
+}
+.control {
+    height: 20px;
+    margin:5px 5px 0px 5px;
+    cursor: pointer;
+}
+
+#items {
+    margin-top: 45px;
+}
+
+.entry {
+    margin:5px 5px 5px 5px;
+    padding:5px;
+    -moz-border-radius:4px;
+    -webkit-border-radius:4px;
+    -khtml-border-radius:4px;
+    border-radius:4px;
+    background:rgba(255, 255, 255, 0.4);
+    position:relative;
+    font: 10px/19px 'OpenSansRegular', Arial, sans-serif;
+    font-size:0.7em;
+    border: 1px solid rgba(255, 255, 255, 0);
+    border-left:3px solid #5f9490;
+}
+
+.entry-title {
+    height: 20px;
+    display:inline;
+    margin-right:5px;
+    cursor:pointer;
+    color:#000000;
+    padding-top:7px;
+    padding-bottom:7px;
+}
+
+.entry-icon, .entry-star, .entry-unread, .entry-icon img {
+    display:block;
+    float:left;
+    width:16px;
+    height:16px;
+    text-decoration:none;
+    margin-right:5px;
+}
+
+.entry-star, .entry-unread {
+    cursor: pointer;
+    float: right;
+}
+
+.entry-datetime {
+    display:inline;
+    color:#888;
+    text-decoration:none;
+    cursor: default;
+}
+
+.toolbar {
+    margin:5px 5px 5px 5px;
+    padding:5px;
+    font: 14px/15px 'OpenSansRegular', Arial, sans-serif;
+    font-size:0.9em;
+}
+
+#updated {
+    color:#888;
+    display: block;
+    float: right;
+    cursor: default;
+}
+
+#more {
+    display: block;
+    float: left;
+    cursor: pointer;
+}
+
+#popup {
+    position:absolute;
+    left:0;
+    top:0;
+    right: 0;
+    bottom: 0;    
+    cursor: pointer;
+}
+
+#popupText {
+    margin:0px 0px 0px 0px;
+    padding:0px;
+    font: 14px/15px 'OpenSansRegular', Arial, sans-serif;
+    font-size:0.8em;
+}
