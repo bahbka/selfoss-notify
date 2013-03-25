@@ -52,7 +52,7 @@
     }, {
         "type": "integer",
         "name": "fontSize",
-        "value": 8,
+        "value": 9,
         "title": "Font size (px)"
     }, {
         "type": "integer",
