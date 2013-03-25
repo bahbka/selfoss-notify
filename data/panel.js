@@ -52,7 +52,6 @@ function generateEntry(item, url) {
 }
 
 self.port.on("panelResize", function() {
-    console.log("panelResize: height="+eval($(".items").height()+80));
     self.port.emit("panel-resize", null, $(".items").height()+80);
 });
 
