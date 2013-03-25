@@ -19,7 +19,8 @@ body {
     user-select: none;
 }
 
-#header {
+/* header of panel */
+.header {
     position: absolute;
     left: 0;
     top: 0;
@@ -31,30 +32,32 @@ body {
     cursor: default;
 }
 
-#logo {
+.logo {
     display: inline;
     height: 20px;
     margin: 5px 5px 0px 5px;
     cursor: pointer;
 }
 
-#title {
+.title {
     display: inline;
     color: #eeeeee;
     cursor: pointer;
 }
 
-#buttons {
-    float: right;
+.buttons {
+    
 }
 
 .control {
     height: 20px;
     margin: 5px 5px 0px 5px;
     cursor: pointer;
+    float: right;
 }
 
-#items {
+/* entries */
+.items {
     margin-top: 45px;
 }
 
@@ -83,8 +86,15 @@ body {
     padding-bottom: 7px;
 }
 
+.entry-datetime {
+    display: inline;
+    color: #888;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
 .entry-icon, .entry-star, .entry-unread, .entry-icon img {
-    display: block;
+    display: inline-block;
     float: left;
     width: 16px;
     height: 16px;
@@ -97,12 +107,7 @@ body {
     float: right;
 }
 
-.entry-datetime {
-    display: inline;
-    color: #888;
-    text-decoration: none;
-}
-
+/* bottom of panel */
 .toolbar {
     margin: 5px 5px 5px 5px;
     padding: 5px;
@@ -110,20 +115,21 @@ body {
     font-size: 0.9em;
 }
 
-#updated {
+.updated {
     color: #888;
     display: block;
     float: right;
-    cursor: default;
+    cursor: pointer;
 }
 
-#more {
+.more {
     display: block;
     float: left;
     cursor: pointer;
 }
 
-#popup {
+/* popup */
+.popup {
     position: absolute;
     left: 0;
     top: 0;
@@ -132,7 +138,7 @@ body {
     cursor: pointer;
 }
 
-#popupText {
+.popupText {
     margin: 0px 0px 0px 0px;
     padding: 0px;
     font: 14px/15px 'OpenSansRegular', Arial, sans-serif;

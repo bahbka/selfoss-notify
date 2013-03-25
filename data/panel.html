@@ -5,19 +5,17 @@
         <link rel="stylesheet" href="style.css">
     </head>
 	<body>
-		<div id="header">
-			<img id="logo" src="images/widget_default.png">
-			<h2 id="title">Selfoss Notify</h2>
-			<div id="buttons">
-				<img class="control" id="panel-refresh" src="images/update_button.png">
-				<img class="control" id="panel-open-preferences" src="images/settings_button.png">
-				<img class="control" id="panel-close" src="images/close_button.png">
-			</div>
+		<div class="header">
+			<img class="logo" data-function="panel-open-selfoss" src="images/widget_default.png">
+			<h2 class="title" data-function="panel-open-selfoss">Selfoss Notify</h2>
+            <img class="control" data-function="panel-close" src="images/close_button.png">
+			<img class="control" data-function="panel-open-preferences" src="images/settings_button.png">
+            <img class="control" data-function="panel-refresh" src="images/update_button.png">
 		</div>
-		<div id="items"></div>
+		<div class="items"></div>
 		<div class="toolbar">
-			<div id="more"></div>
-			<div id="updated"></div>
+			<div class="more" data-function="panel-more-items"></div>
+			<div class="updated" data-function="panel-refresh"></div>
 		</div>
 	</body>
 </html>
