@@ -27,13 +27,13 @@ function generateEntry(item, url) {
 
     entry += '<div class="entry" id="'+item.id+'"">';
     entry += '<img class="entry-icon" src="'+url+'/favicons/'+item.icon+'">';
-    entry += '<h2 class="entry-title">'+item.title+'</h2>';
-    entry += '<div class="entry-datetime"> • '+item.timeago+'</div>';
     entry += '<img class="entry-unread" src="images/unread.png">';
     if (item.starred == 1)
         entry += '<img class="entry-star" src="images/starred.png">';
     else
         entry += '<img class="entry-star" src="images/unstarred.png">';
+    entry += '<h2 class="entry-title">'+item.title+'</h2>';
+    entry += '<div class="entry-datetime"> • '+item.timeago+'</div>';
     entry += "</div>";
 
     return entry;
@@ -62,6 +62,7 @@ $("#items").delegate(".entry-unread", "click", function(event) {
 });
 
 $("#more").click(function() {
+    // TODO show more entries, don't open selfoss
     self.port.emit("panel-open-selfoss");
 });
 $("#logo").click(function() {
