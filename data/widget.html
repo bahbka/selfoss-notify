@@ -6,7 +6,7 @@
                 position: absolute;
                 bottom: 0px;
                 right: 0px;
-                font: bold 9px Sans-Serif;
+                font: bold 9px arial, sans-serif;
                 cursor: default;
                 -webkit-touch-callout: none;
                 -webkit-user-select: none;
@@ -14,11 +14,16 @@
                 -moz-user-select: none;
                 -ms-user-select: none;
                 user-select: none;
+                padding: 1px 2px 1px 2px;
+                -moz-border-radius: 2px;
+                -webkit-border-radius: 2px;
+                -khtml-border-radius: 2px;
+                border-radius: 2px;
             }
         </style>
     </head>
     <body>
-        <img id="widgetIcon" height="100%" src="images/widget_inactive.png" />
-        <div id="badgeText" hidden="true" />
+        <img style="height: 100%;" id="widgetIcon" src="images/widget_inactive.png">
+        <div id="badgeText" hidden="true"></div>
     </body>
 </html>
