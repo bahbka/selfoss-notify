@@ -46,10 +46,6 @@ body {
     cursor: pointer;
 }
 
-.buttons {
-    
-}
-
 .control {
     height: 20px;
     margin: 5px 5px 0px 5px;
@@ -94,7 +90,7 @@ body {
     white-space: nowrap;
 }
 
-.entry-icon, .entry-star, .entry-unread, .entry-icon img {
+.entry-icon, .entry-star, .entry-unread, .entry-show, .entry-icon img {
     display: inline-block;
     float: left;
     width: 16px;
@@ -103,9 +99,21 @@ body {
     margin-right: 5px;
 }
 
-.entry-star, .entry-unread {
+.entry-star, .entry-unread, .entry-show {
     cursor: pointer;
     float: right;
+}
+
+.entry-content td {
+    font-size:0.95em;
+}
+
+.entry-content a {
+    color:#3d6d69;
+}
+
+.entry-content img {
+    max-width:99%;
 }
 
 /* bottom of panel */
