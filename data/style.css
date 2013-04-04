@@ -104,8 +104,12 @@ body {
     float: right;
 }
 
+.entry-content {
+    font: 12px/21px 'OpenSansRegular', Arial, sans-serif;
+}
+
 .entry-content td {
-    font-size:0.95em;
+    font: 12px/21px 'OpenSansRegular', Arial, sans-serif;
 }
 
 .entry-content a {
