@@ -54,7 +54,7 @@ var panel = require("sdk/panel").Panel({
     height: 80,
     contentURL: self.data.url("panel.html"),
     contentScriptFile: [
-        self.data.url("jquery-2.1.1.min.js"),
+        self.data.url("jquery-2.1.4.min.js"),
         self.data.url("panel.js")
     ],
     onShow: function() {
