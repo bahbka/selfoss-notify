@@ -5,7 +5,7 @@
     "license": "GPL 3.0",
     "author": "Ivan Strokanev <bahbka@gmail.com>",
     "homepage": "https://github.com/bahbka/selfoss-notify",
-    "version": "0.8.5",
+    "version": "0.9.0",
     "id": "jid1-9A1rrddMJgAZ1g@jetpack",
 
     "preferences": [
@@ -17,13 +17,32 @@
     }, {
         "type": "control",
         "name": "tryUpdate",
-        "label": "Try update",
-        "title": ""
+        "label": "update",
+        "title": "Force update"
     }, {
         "type": "integer",
         "name": "interval",
         "value": 15,
         "title": "Update interval (minutes)"
+    }, {
+        "type": "radio",
+        "name": "onClick",
+        "title": "On click",
+        "value": "panel",
+        "options": [
+            {
+                "value": "panel",
+                "label": "show unread items"
+            },
+            {
+                "value": "selfoss",
+                "label": "open Selfoss tab"
+            },
+            {
+                "value": "update",
+                "label": "update"
+            }
+        ]
     }, {
         "type": "bool",
         "name": "enablePopup",
@@ -44,31 +63,6 @@
         "name": "openRead",
         "value": true,
         "title": "Mark as read after opening"
-    }, {
-        "type": "bool",
-        "name": "showBadge",
-        "value": true,
-        "title": "Show unread count"
-    }, {
-        "type": "integer",
-        "name": "fontSize",
-        "value": 9,
-        "title": "Font size (px)"
-    }, {
-        "type": "integer",
-        "name": "badgeOpacity",
-        "value": 75,
-        "title": "Opacity in percent"
-    }, {
-        "type": "color",
-        "name": "fontColor",
-        "value": "#FFFFFF",
-        "title": "Font color"
-    }, {
-        "type": "color",
-        "name": "bgColor",
-        "value": "#444444",
-        "title": "Background color"
     }
     ]
 }

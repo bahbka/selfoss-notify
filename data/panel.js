@@ -75,8 +75,8 @@ $(".logo,.title,.control,.more,.updated").click(function() {
     self.port.emit($(this).attr('data-function'));
 });
 
-$(".items").delegate(".entry", "click", function() {
-    self.port.emit("panel-open-item", $(this).attr('id'));
+$(".items").delegate(".entry-title", "click", function() {
+    self.port.emit("panel-open-item", $(this).parent().attr('id'));
 });
 
 $(".items").delegate("a", "click", function(event) {

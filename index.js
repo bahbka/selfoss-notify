@@ -16,7 +16,7 @@ var timers = require("sdk/timers");
 
 // addon-wide variables
 var timer;
-var currentBadgeText;
+var error = false;
 var currentItems = {};
 var lastUpdated = null;
 var cleanUrl = null;
@@ -33,20 +33,18 @@ var APIHandlers = {
     unstarr: "/unstarr",
 };
 
-/*
- * ELEMENTS 
- */
-// widget
-var widget = require("sdk/widget").Widget({
+var button = require('sdk/ui/button/action').ActionButton({
     id: "selfoss-notify",
     label: "selfoss",
-    contentURL: self.data.url("widget.html"),
-    contentScriptFile: self.data.url("widget.js"),
-    onAttach: function () {
-        console.debug("INIT");
-        updateInterval();
-    }
+    icon: "./images/button_default.png",
+    badge: "...",
+    badgeColor: "#3d6d69",
+    onClick: buttonClick
 });
+
+// initialize
+console.log("INIT");
+updateInterval();
 
 // preview panel
 var panel = require("sdk/panel").Panel({
@@ -68,7 +66,7 @@ var popup = require("sdk/panel").Panel({
     height: 50,
     contentURL: self.data.url("popup.html"),
     contentScriptFile: [
-        self.data.url("jquery-2.1.1.min.js"),
+        self.data.url("jquery-2.1.4.min.js"),
         self.data.url("popup.js")
     ]
 });
@@ -76,14 +74,16 @@ var popup = require("sdk/panel").Panel({
 /*
  * CHANGE SETTING EVENTS
  */
-require("sdk/simple-prefs").on("showBadge", function() { updateWidget(currentBadgeText); });
-require("sdk/simple-prefs").on("fontSize", function() { updateWidget(currentBadgeText); });
-require("sdk/simple-prefs").on("fontColor", function() { updateWidget(currentBadgeText); });
-require("sdk/simple-prefs").on("bgColor", function() { updateWidget(currentBadgeText); });
-require("sdk/simple-prefs").on("badgeOpacity", function() { updateWidget(currentBadgeText); });
-
 require("sdk/simple-prefs").on("tryUpdate", mainProcess);
 require("sdk/simple-prefs").on("interval", updateInterval);
+
+require("sdk/simple-prefs").on("url", function() {
+    var [proto, host]=stripTrailingSlash(settings.url).split("://");
+    if (proto && host)
+        cleanUrl = proto+'://'+host; // remember clean url for future use
+    else
+        cleanUrl = null;
+});
 
 require("sdk/simple-prefs").on("numberItems", function() {
     if (settings.numberItems < 1) settings.numberItems = 1;
@@ -97,24 +97,29 @@ require("sdk/simple-prefs").on("popupHideTimeout", function() {
 });
 
 /*
- * WIDGET EVENTS
+ * BUTTON EVENTS
  */
-// open selfoss
-widget.port.on("widget-left-click", openSelfoss);
+function buttonClick(state) {
+    if (cleanUrl != null) {
+        switch (settings.onClick) {
+            case "panel":
+                panelNumberItems = settings.numberItems;
+                panel.port.emit("cleanExpanded");
+                fetchItems(cleanUrl);
+                panel.show({position: button});
+                break;
 
-//update items
-widget.port.on("widget-middle-click", mainProcess);
+            case "selfoss":
+                openSelfoss();
+                break;
 
-// show panel
-widget.port.on("widget-right-click", function() {
-    var node = getItemNodeForWidget(widget);
-    if (node != null) {
-        panelNumberItems = settings.numberItems;
-        panel.port.emit("cleanExpanded");
-        fetchItems(cleanUrl);
-        panel.show(node);
-    }
-});
+            case "update":
+                mainProcess();
+                break;
+        }
+    } else
+        openSettings();
+}
 
 /*
  * PANEL EVENTS
@@ -124,7 +129,7 @@ panel.port.on("panel-open-selfoss", openSelfoss);
 
 // open link
 panel.port.on("panel-open-link", function(url) {
-    console.debug("panel: open link "+url);
+    console.log("panel: open link "+url);
 
     var tabs = require('sdk/tabs');
     for each (var tab in tabs)
@@ -151,15 +156,14 @@ panel.port.on("panel-refresh", function() { fetchItems(cleanUrl) });
 
 // mark item as read
 panel.port.on("panel-mark-read", function(id) {
-    console.debug("panel: read "+id);
+    console.log("panel: read "+id);
     markRead(id);
-    unreadItemsCount = checkUnread();
     updatePanel();
 });
 
 // starr item
 panel.port.on("panel-mark-star", function(id) {
-    console.debug("panel: starr "+id);
+    console.log("panel: starr "+id);
     if (currentItems[id] && currentItems[id].starred == "1") {
         APIRequest(APIHandlers["unstarr"], id);
         currentItems[id].starred = 0;
@@ -172,13 +176,12 @@ panel.port.on("panel-mark-star", function(id) {
 
 // open item from panel
 panel.port.on("panel-open-item", function(id) {
-    console.debug("panel: open "+id);
+    console.log("panel: open "+id);
     if (currentItems[id]) {
         panel.hide();
         require('sdk/tabs').open(currentItems[id].link);
         if (settings.openRead) {// mark as read if such setting set
             markRead(id);
-            unreadItemsCount = checkUnread();
             updatePanel();
         }
     }
@@ -186,7 +189,7 @@ panel.port.on("panel-open-item", function(id) {
 
 // show more items
 panel.port.on("panel-more-items", function() {
-    console.debug("panel: more");
+    console.log("panel: more");
     panelNumberItems += 3;
     if (panelNumberItems > 20)
         panelNumberItems = 20;
@@ -212,8 +215,8 @@ popup.port.on("popup-open-selfoss", openSelfoss);
  */
 // main cycle
 function mainProcess() {
-    updateWidget("...", _("updating"));
-    
+    updateButton(-2);
+
     var [proto, host]=stripTrailingSlash(settings.url).split("://");
     if (proto && host) {
         cleanUrl = proto+'://'+host; // remember clean url for future use
@@ -221,12 +224,12 @@ function mainProcess() {
             url: cleanUrl+APIHandlers["login"],
             onComplete: function (response) {
                 if (response.json && response.json.success) {
-                    console.debug("mainProcess: already logged in");
+                    console.log("mainProcess: already logged in");
                     fetchStats(cleanUrl); // logged in, let's check unread items
                 } else {
                     if (response.headers["WWW-Authenticate"]) { // not logged in and need http auth
                         var realm = response.headers["WWW-Authenticate"].match(/realm="(.+?)"/)[1]; // extract realm
-                        console.debug("mainProcess: need http auth for "+cleanUrl+" realm "+realm);
+                        console.log("mainProcess: need http auth for "+cleanUrl+" realm "+realm);
 
                         require("sdk/passwords").search({ // get credentials for http auth
                             url: cleanUrl,
@@ -237,7 +240,7 @@ function mainProcess() {
                                         url: proto+'://'+credentials[0].username+':'+credentials[0].password+'@'+host+APIHandlers["login"],
                                         onComplete: function (response) {
                                             if (!response.headers["WWW-Authenticate"]) { // http auth successful
-                                                console.debug("mainProcess: http auth success");
+                                                console.log("mainProcess: http auth success");
 
                                                 if (response.json && response.json.success) {
                                                     fetchStats(cleanUrl); // and logged in
@@ -246,25 +249,26 @@ function mainProcess() {
                                                 }
                                             } else {
                                                 console.warn("mainProcess: http auth failed");
-                                                updateWidget(-1, _("credentialsError"));
+                                                updateButton(-1, _("credentialsError"));
                                             }
                                         }
                                     }).get();
                                 } else {
                                     console.warn("mainProcess: http auth credentials not found");
-                                    updateWidget(-1, _("credentialsError"));
+                                    updateButton(-1, _("credentialsError"));
                                 }
                             }
                         });
                     } else {
                         selfossAuth(cleanUrl); // http auth not needed, try site auth
+                        fetchStats(cleanUrl); // and logged in
                     }
                 }
             }
         }).get();
     } else {
         console.warn("mainProcess: invalid url");
-        updateWidget(-1, _("invalidUrl"));
+        updateButton(-1, _("invalidUrl"));
     }
 }
 
@@ -282,17 +286,16 @@ function selfossAuth(cleanUrl) {
                     content: {username: credentials[0].username, password: credentials[0].password},
                     onComplete: function (response) {
                         if (response.json && response.json.success) {
-                            console.debug("selfossAuth: logged in");
+                            console.log("selfossAuth: logged in");
                             fetchStats(cleanUrl);
                         } else {
                             console.warn("selfossAuth: auth failed");
-                            updateWidget(-1, _("authError"));
+                            updateButton(-1, _("authError"));
                         }
                     }
                 }).get();
             } else {
                 console.warn("selfossAuth: site credentials not found");
-                updateWidget(-1, _("credentialsError"));
             }
         }
     });
@@ -300,59 +303,54 @@ function selfossAuth(cleanUrl) {
 
 // fetch items
 function fetchItems(url) {
-    console.debug("fetchItems: start");
+    console.log("fetchItems: start");
+    updatePanel(true);
     request({
         url: url+APIHandlers["items"],
         content: {items: 200, type: "unread"},
         onComplete: function (response) {
-            console.debug("fetchItems: complete");
+            console.log("fetchItems: complete");
             lastUpdated = new Date();
             currentItems = {};
-            for (var i = 0; i < response.json.length; i++)
-                currentItems[response.json[i].id] = response.json[i]; // fill items hash
+            if (response.json != null) {
+                for (var i = 0; i < response.json.length; i++)
+                    currentItems[response.json[i].id] = response.json[i]; // fill items hash
+                fetchStats(cleanUrl);
+                error = false;
+            } else
+                updateButton(-1, _("jsonError"));
+
             updatePanel();
-            unreadItemsCount = checkUnread();;
        }
     }).get();
 }
 
 // fetch stats
 function fetchStats(url) {
-    console.debug("fetchStats: start");
+    console.log("fetchStats: start");
     request({
         url: url+APIHandlers["stats"],
         onComplete: function (response) {
-            console.debug("fetchStats: complete");
+            console.log("fetchStats: complete");
             lastUpdated = new Date();
-            currentItems = {};
 
-            var count = response.json.unread;
+            if (response.json != null) {
+                var count = response.json.unread;
 
-            updateWidgetUnread(count);
+                updateButton(count);
 
-            if (settings.enablePopup && (count-unreadItemsCount)>0) {
-                var node = getItemNodeForWidget(widget);
-                if (node != null && !panel.isShowing) {
-                    popup.port.emit("updatePopup", _("unreadPopup", (count-unreadItemsCount)));
-                    popup.show(node);
-                    timers.setTimeout(function() { popup.hide(); }, settings.popupHideTimeout * 1000);
+                if (settings.enablePopup && (count-unreadItemsCount)>0) {
+                    if (!panel.isShowing) {
+                        popup.port.emit("updatePopup", _("unreadPopup", (count-unreadItemsCount)));
+                        popup.show({position: button});
+                        timers.setTimeout(function() { popup.hide(); }, settings.popupHideTimeout * 1000);
+                    }
                 }
-            }
-            unreadItemsCount = count;
+                unreadItemsCount = count;
+            } else
+                updateButton(-1, _("jsonError"));
        }
     }).get();
-}
-
-// check unread items after fetch
-function checkUnread() {
-    var count = 0;
-    for (var id in currentItems) {
-        if(currentItems[id].unread == 1)
-            count++;
-    }
-    console.debug("checkUnread: "+count+" unread items");
-    updateWidgetUnread(count);
-    return count;
 }
 
 // mark item as read
@@ -360,6 +358,9 @@ function markRead(id) {
     if (currentItems[id]) {
         APIRequest(APIHandlers["mark"], id);
         currentItems[id].unread = 0;
+
+        unreadItemsCount--;
+        updateButton(unreadItemsCount);
     }
 }
 
@@ -388,55 +389,53 @@ function openSelfoss() {
     }
 }
 
-// update widget unread count
-function updateWidgetUnread(count) {
-    if (count > 0)
-        updateWidget(count, _("unreadItems", count));
-    else 
-        updateWidget(0, _("noItems"));
-}
+// update button
+function updateButton(badgeText, tooltip) {
+    console.log("updateButton");
 
-// update widget
-function updateWidget(badgeText, tooltip) {
-    // validate settings
-    if (settings.fontSize < 6) settings.fontSize = 6;
-    if (settings.fontSize > 11) settings.fontSize = 11;
-    if (settings.badgeOpacity < 0) settings.badgeOpacity = 0;
-    if (settings.badgeOpacity > 100) settings.badgeOpacity = 100;
+    error = false;
+
+    if (badgeText == null)
+        badgeText = 0;
 
     // set icon color according status (unread, error, ...)
-    var widgetIcon, showBadge;
     switch(badgeText) {
         case 0:
-            widgetIcon = "images/widget_inactive.png";
-            showBadge = false;
+            button.icon = "./images/button_inactive.png";
+            button.badge = null;
+            tooltip = _("noItems");
             break;
+
         case -1:
-            widgetIcon = "images/widget_error.png";
-            showBadge = false;
+            button.icon = "./images/button_error.png";
+            button.badge = null;
+            error = true;
             break;
+
+        case -2:
+            button.icon = "./images/button_default.png";
+            button.badge = "...";
+            tooltip = _("inProgress");
+            break;
+
         default:
-            widgetIcon = "images/widget_default.png";
-            showBadge = settings.showBadge;
+            button.icon = "./images/button_default.png";
+            button.badge = badgeText;
+            tooltip = _("unreadItems", badgeText)
     }
 
-    if (widget) {
-        console.debug("updateWidget");
-        if (tooltip != null) {
-            if (lastUpdated != null)
-                widget.tooltip = tooltip+"\n"+_("lastUpdated", lastUpdated.toLocaleTimeString());
-            else
-                widget.tooltip = tooltip
-        }
-        widget.port.emit("updateWidget", widgetIcon, showBadge, badgeText, settings.fontSize, settings.fontColor, settings.bgColor, settings.badgeOpacity);
+    if (tooltip != null) {
+        if (lastUpdated != null)
+            button.label = tooltip+"\n"+_("lastUpdated", lastUpdated.toLocaleTimeString());
+        else
+            button.label = tooltip
     }
-
-    currentBadgeText = badgeText; // save current badge text for updating widget while changing settings
 }
 
 // update panel
-function updatePanel() {
-    var error = false;
+function updatePanel(inProgress) {
+    console.log("updatePanel");
+
     var count = 0;
     var countMore = 0;
 
@@ -453,16 +452,18 @@ function updatePanel() {
     if (countMore > 0)
         moreText = _("moreCount", countMore);
 
-    if (currentBadgeText == -1) {
+    if (error) {
         moreText = _("updateError");
-        error = true;
     } else if (count == 0) {
         moreText = _("noItems");
     }
 
     var lastUpdatedText = _("neverUpdated");
-    if (lastUpdated != null)
-        lastUpdatedText = _("lastUpdated", timeAgo(lastUpdated));
+    if (inProgress == true)
+        lastUpdatedText = _("inProgress");
+    else
+        if (lastUpdated != null)
+            lastUpdatedText = _("lastUpdated", timeAgo(lastUpdated));
 
     panel.port.emit("updateItems", currentItems, lastUpdatedText, panelNumberItems, moreText, cleanUrl, error);
     if (panel.isShowing)
@@ -476,11 +477,11 @@ function updateInterval() {
 
     if (timer != null) {
         timers.clearInterval(timer);
-        console.debug("updateInterval: clear interval");
+        console.log("updateInterval: clear interval");
     }
 
     timer = timers.setInterval(mainProcess, settings.interval * 1000 * 60);
-    console.debug("updateInterval: setting interval "+settings.interval+" minutes");
+    console.log("updateInterval: setting interval "+settings.interval+" minutes");
     mainProcess();
 }
 
@@ -495,27 +496,6 @@ function openSettings() {
             });
         }
     });
-}
-
-// get widget DOM node
-function getItemNodeForWidget(widget) {
-    var item = null;
-    
-    var doc = require("sdk/window/utils").getMostRecentBrowserWindow().document;
-    var selector = 'toolbaritem[id$="'+widget.id+'"]';
-
-    for each (var barName in ["addon-bar", "nav-bar", "PersonalToolbar", "toolbar-menubar"]) {
-        var bar = doc.getElementById(barName);
-        if (bar != null) {
-            item = bar.querySelector(selector);
-            if (item != null) {
-                console.debug("getItemNodeForWidget: found widget on "+barName);
-                break;
-            }
-        }
-    }
-
-    return item;
 }
 
 // convert string to date
