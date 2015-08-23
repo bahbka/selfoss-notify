@@ -425,9 +425,13 @@ function updateButton(badgeText, tooltip) {
     }
 
     if (tooltip != null) {
-        if (lastUpdated != null)
-            button.label = tooltip+"\n"+_("lastUpdated", lastUpdated.toLocaleTimeString());
-        else
+        if (lastUpdated != null) {
+            var lastUpdatedText =
+                ("0" + lastUpdated.getHours()).slice(-2) + ":" +
+                ("0" + lastUpdated.getMinutes()).slice(-2) + ":" +
+                ("0" + lastUpdated.getSeconds()).slice(-2);
+            button.label = tooltip+"\n"+_("lastUpdated", lastUpdatedText);
+        } else
             button.label = tooltip
     }
 }
