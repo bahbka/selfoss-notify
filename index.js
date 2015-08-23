@@ -43,7 +43,7 @@ var button = require('sdk/ui/button/action').ActionButton({
 });
 
 // initialize
-console.log("INIT");
+//console.log("INIT");
 updateInterval();
 
 // preview panel
@@ -129,7 +129,7 @@ panel.port.on("panel-open-selfoss", openSelfoss);
 
 // open link
 panel.port.on("panel-open-link", function(url) {
-    console.log("panel: open link "+url);
+    //console.log("panel: open link "+url);
 
     var tabs = require('sdk/tabs');
     for each (var tab in tabs)
@@ -156,14 +156,14 @@ panel.port.on("panel-refresh", function() { fetchItems(cleanUrl) });
 
 // mark item as read
 panel.port.on("panel-mark-read", function(id) {
-    console.log("panel: read "+id);
+    //console.log("panel: read "+id);
     markRead(id);
     updatePanel();
 });
 
 // starr item
 panel.port.on("panel-mark-star", function(id) {
-    console.log("panel: starr "+id);
+    //console.log("panel: starr "+id);
     if (currentItems[id] && currentItems[id].starred == "1") {
         APIRequest(APIHandlers["unstarr"], id);
         currentItems[id].starred = 0;
@@ -176,7 +176,7 @@ panel.port.on("panel-mark-star", function(id) {
 
 // open item from panel
 panel.port.on("panel-open-item", function(id) {
-    console.log("panel: open "+id);
+    //console.log("panel: open "+id);
     if (currentItems[id]) {
         panel.hide();
         require('sdk/tabs').open(currentItems[id].link);
@@ -189,7 +189,7 @@ panel.port.on("panel-open-item", function(id) {
 
 // show more items
 panel.port.on("panel-more-items", function() {
-    console.log("panel: more");
+    //console.log("panel: more");
     panelNumberItems += 3;
     if (panelNumberItems > 20)
         panelNumberItems = 20;
@@ -224,12 +224,12 @@ function mainProcess() {
             url: cleanUrl+APIHandlers["login"],
             onComplete: function (response) {
                 if (response.json && response.json.success) {
-                    console.log("mainProcess: already logged in");
+                    //console.log("mainProcess: already logged in");
                     fetchStats(cleanUrl); // logged in, let's check unread items
                 } else {
                     if (response.headers["WWW-Authenticate"]) { // not logged in and need http auth
                         var realm = response.headers["WWW-Authenticate"].match(/realm="(.+?)"/)[1]; // extract realm
-                        console.log("mainProcess: need http auth for "+cleanUrl+" realm "+realm);
+                        //console.log("mainProcess: need http auth for "+cleanUrl+" realm "+realm);
 
                         require("sdk/passwords").search({ // get credentials for http auth
                             url: cleanUrl,
@@ -240,7 +240,7 @@ function mainProcess() {
                                         url: proto+'://'+credentials[0].username+':'+credentials[0].password+'@'+host+APIHandlers["login"],
                                         onComplete: function (response) {
                                             if (!response.headers["WWW-Authenticate"]) { // http auth successful
-                                                console.log("mainProcess: http auth success");
+                                                //console.log("mainProcess: http auth success");
 
                                                 if (response.json && response.json.success) {
                                                     fetchStats(cleanUrl); // and logged in
@@ -248,13 +248,13 @@ function mainProcess() {
                                                     selfossAuth(cleanUrl); // need site auth after http auth, paranoia?!
                                                 }
                                             } else {
-                                                console.warn("mainProcess: http auth failed");
+                                                //console.warn("mainProcess: http auth failed");
                                                 updateButton(-1, _("credentialsError"));
                                             }
                                         }
                                     }).get();
                                 } else {
-                                    console.warn("mainProcess: http auth credentials not found");
+                                    //console.warn("mainProcess: http auth credentials not found");
                                     updateButton(-1, _("credentialsError"));
                                 }
                             }
@@ -267,7 +267,7 @@ function mainProcess() {
             }
         }).get();
     } else {
-        console.warn("mainProcess: invalid url");
+        //console.warn("mainProcess: invalid url");
         updateButton(-1, _("invalidUrl"));
     }
 }
@@ -286,16 +286,16 @@ function selfossAuth(cleanUrl) {
                     content: {username: credentials[0].username, password: credentials[0].password},
                     onComplete: function (response) {
                         if (response.json && response.json.success) {
-                            console.log("selfossAuth: logged in");
+                            //console.log("selfossAuth: logged in");
                             fetchStats(cleanUrl);
                         } else {
-                            console.warn("selfossAuth: auth failed");
+                            //console.warn("selfossAuth: auth failed");
                             updateButton(-1, _("authError"));
                         }
                     }
                 }).get();
             } else {
-                console.warn("selfossAuth: site credentials not found");
+                //console.warn("selfossAuth: site credentials not found");
             }
         }
     });
@@ -303,13 +303,13 @@ function selfossAuth(cleanUrl) {
 
 // fetch items
 function fetchItems(url) {
-    console.log("fetchItems: start");
+    //console.log("fetchItems: start");
     updatePanel(true);
     request({
         url: url+APIHandlers["items"],
         content: {items: 200, type: "unread"},
         onComplete: function (response) {
-            console.log("fetchItems: complete");
+            //console.log("fetchItems: complete");
             lastUpdated = new Date();
             currentItems = {};
             if (response.json != null) {
@@ -327,11 +327,11 @@ function fetchItems(url) {
 
 // fetch stats
 function fetchStats(url) {
-    console.log("fetchStats: start");
+    //console.log("fetchStats: start");
     request({
         url: url+APIHandlers["stats"],
         onComplete: function (response) {
-            console.log("fetchStats: complete");
+            //console.log("fetchStats: complete");
             lastUpdated = new Date();
 
             if (response.json != null) {
@@ -391,7 +391,7 @@ function openSelfoss() {
 
 // update button
 function updateButton(badgeText, tooltip) {
-    console.log("updateButton");
+    //console.log("updateButton");
 
     error = false;
 
@@ -434,7 +434,7 @@ function updateButton(badgeText, tooltip) {
 
 // update panel
 function updatePanel(inProgress) {
-    console.log("updatePanel");
+    //console.log("updatePanel");
 
     var count = 0;
     var countMore = 0;
@@ -477,11 +477,11 @@ function updateInterval() {
 
     if (timer != null) {
         timers.clearInterval(timer);
-        console.log("updateInterval: clear interval");
+        //console.log("updateInterval: clear interval");
     }
 
     timer = timers.setInterval(mainProcess, settings.interval * 1000 * 60);
-    console.log("updateInterval: setting interval "+settings.interval+" minutes");
+    //console.log("updateInterval: setting interval "+settings.interval+" minutes");
     mainProcess();
 }
 
