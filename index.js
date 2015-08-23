@@ -491,15 +491,9 @@ function updateInterval() {
 
 // open addon settings
 function openSettings() {
-    require('sdk/tabs').open({
-        url: 'about:addons',
-        onReady: function(tab) {
-            tab.attach({
-                contentScriptWhen: 'end',
-                contentScript: 'AddonManager.getAddonByID("' + self.id + '", function(aAddon) {\n' + 'unsafeWindow.gViewController.commands.cmd_showItemDetails.doCommand(aAddon, true);\n' + '});\n'
-            });
-        }
-    });
+    const {Cu} = require('chrome');
+    const {Services} = Cu.import('resource://gre/modules/Services.jsm');
+    Services.wm.getMostRecentWindow('navigator:browser').BrowserOpenAddonsMgr('addons://detail/' + self.id + '/preferences');
 }
 
 // convert string to date
