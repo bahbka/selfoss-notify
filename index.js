@@ -395,7 +395,7 @@ function updateButton(badgeText, tooltip) {
 
     error = false;
 
-    if (badgeText == null)
+    if (badgeText == null || badgeText == '0')
         badgeText = 0;
 
     // set icon color according status (unread, error, ...)
@@ -413,7 +413,6 @@ function updateButton(badgeText, tooltip) {
             break;
 
         case -2:
-            button.icon = "./images/button_default.png";
             button.badge = "...";
             tooltip = _("inProgress");
             break;
